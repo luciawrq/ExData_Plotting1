@@ -1,0 +1,21 @@
+Data <- read.table("./data/household_power_consumption.txt", header = TRUE, sep = ";")
+Data$Date <- as.character(Data$Date)
+subData <- subset(Data, Date == "2/2/2007" | Date == "1/2/2007")
+library(lubridate)
+subData$Date <- dmy(subData$Date)
+subData$Time <- hms(subData$Time)
+col <- c(3, 4,5,6,7,8)
+subData[, col] <- lapply(col, function(x) as.numeric(as.character(subData[,x])))
+
+par(mfrow = c(2,2), mar = c(4,5,2,1))
+with(subData, plot(Date+Time, Global_active_power, type = "l", xlab = "", ylab = "Global Active Power"))
+with(subData, plot(Date+Time, Voltage, type = "l", xlab = "datetime", ylab = "Voltage"))
+
+with(subData, plot(Date+Time, Sub_metering_1 , type = "l", xlab = "", ylab = "Energy sub metering"))
+with(subData, points(Date+Time, Sub_metering_2 , type = "l", col = "red"))
+with(subData, points(Date+Time, Sub_metering_3 , type = "l", col = "blue"))
+legend("topright", lty = 1, bty = "n", col = c("black","red","blue"), legend = c("Sub_metering_1    ", "Sub_metering_2    ", "Sub_metering_3    "))
+
+with(subData, plot(Date+Time, Global_reactive_power, type = "l", xlab = "datetime", ylab = "Global_reactive_power"))
+dev.copy(png, file = "plot4.png")
+dev.off()
